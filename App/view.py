@@ -1,12 +1,24 @@
 import sys
 
+import App.logic as log
+
+import os
+default_limit=1000
+
+
+
+sys.setrecursionlimit(default_limit*10)
+
+data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/'
+
 
 def new_logic():
     """
         Se crea una instancia del controlador
     """
     #TODO: Llamar la función de la lógica donde se crean las estructuras de datos
-    pass
+    catalog=log.new_logic()
+    return catalog
 
 def print_menu():
     print("Bienvenido")
@@ -26,7 +38,30 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    pass
+    start_time = log.get_time()
+    frame=log.datos()
+    frame=log.datos()
+    size=log.load_data(control,frame)
+    
+    ult=log.greater_year(control)
+    prim=log.lesser_year(control)
+    
+    first=log.primeros(control)
+    last=log.ultimos(control)
+    end_time = log.get_time()
+    load_time = log.delta_time(start_time, end_time)
+    print("Número de registros: ", size)
+    print("Último año de registro: ", ult)
+    print("Primer año de registro reportado: ", prim)
+    print("Primeros 5 registros cargados: ")
+    print("...")
+    print(first)
+    print("...")
+    print("Últimos 5 registros cargados: ")
+    print("...")
+    print(last)
+    print("La acción tomó: ", load_time, "ms")
+    return control
 
 
 def print_data(control, id):
@@ -41,7 +76,11 @@ def print_req_1(control):
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    pass
+    anno=input("Inserte el año de interés: ")
+    datos=log.req_1(control,anno)
+    print("El último registro para el año dado es: ",datos[0])
+    print("Un total de: ", datos[2], " registros pasaron el filtro de busqueda.")
+    print("La acción tomó: ", datos[1], "ms")
 
 
 def print_req_2(control):
@@ -57,7 +96,19 @@ def print_req_3(control):
         Función que imprime la solución del Requerimiento 3 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    anno_i=input("Inserte el año inicial: ")
+    anno_f=input("Inserte el año final: ")
+    nombre=input("Inserte el nombre del departamento de interes: ")
+    datos=log.req_3(control,nombre,anno_i,anno_f)
+    
+    print("Listado de registros: ", datos[0])
+    print("...")
+    print("Un total de: ", datos[3], " registros pasaron el filtro de busqueda.")
+    print("...")
+    print("Total de registros con origen SURVEY: ",datos[1])
+    print("Total de registros con origen CENSUS: ",datos[2])
+    print("...")
+    print("La acción tomó: ", datos[4],"ms")
 
 
 def print_req_4(control):
