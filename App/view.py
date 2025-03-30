@@ -140,7 +140,17 @@ def print_req_7(control):
         Función que imprime la solución del Requerimiento 7 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 7
-    pass
+    fecha_i=input("Inserte el año inicial: ")
+    fecha_f=input("Inserte el año final: ")
+    dep=input("Inserte el nombre del departamento de interés: ")
+    ord=input("¿Como desea que se ordenen los datos?: ")
+    datos=log.req_7(control,dep,fecha_i,fecha_f,ord)
+    
+    print("Un total de "+ str(datos[0]) +" cumplieron el filtro.")
+    print("Listado de años: "+ str(datos[1]))
+    print("El año con MAYOR ingresos encontrado fue: "+ str(datos[2]))
+    print("El año con MENOR ingresos encontrado fue: "+ str(datos[3]))
+    print("La acción tomó: "+ str(datos[4]) +" ms")
 
 
 def print_req_8(control):

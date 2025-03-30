@@ -125,12 +125,9 @@ def primeros(catalog):
                 if ordenados["elements"][j] == catalog["load_time"]["elements"][i]:
                     al.add_last(ordenados2, catalog["state_name"]["elements"][i])
             al.selection_sort(ordenados2, True)
-            for l in range(inicio, ordenados2["size"]):
-                if inicio + l < ordenados["size"]:
-                    ordenados["elements"][l] = ordenados2["elements"][l]
-            for l in range(inicio, ordenados2["size"]):
+            for l in range(inicio, ordenados2["size"]-1):
                 for k in range(0, 5):
-                    if ordenados["elements"][l] == catalog["state_name"]["elements"][k]:
+                    if ordenados2["elements"][l] == catalog["state_name"]["elements"][k]:
                         info = { 
                             "source": catalog["source"]["elements"][j],
                             "unit_measurement": catalog["unit_measurement"]["elements"][j],
@@ -141,7 +138,7 @@ def primeros(catalog):
                             "value": catalog["value"]["elements"][j]
                             }
                         al.add_last(lista_retorno, info)
-            j += ordenados2["size"] - 1
+            j += ordenados2["size"] - 1 
             ordenados2 = al.new_list()
 
         else:
@@ -175,10 +172,7 @@ def ultimos(catalog):
                 if ordenados["elements"][j] == catalog["load_time"]["elements"][i]:
                     al.add_last(ordenados2, catalog["state_name"]["elements"][i])
             al.selection_sort(ordenados2, True)
-            for l in range(inicio, ordenados2["size"]):
-                if inicio + l < ordenados["size"]:
-                    ordenados["elements"][l] = ordenados2["elements"][l]
-            for l in range(inicio, ordenados2["size"]):
+            for l in range(inicio, ordenados2["size"]-1):
                 for k in range(tamaño - 5, tamaño):
                     if ordenados["elements"][l] == catalog["state_name"]["elements"][k]:
                         info = { 
@@ -277,10 +271,9 @@ def req_3(catalog, dep, year0, year):
         return "Por favor introduzca un intervalo de tiempo valido..."    
     lista_info = al.new_list()
     alt_info = al.new_list()
-    ordenada = al.new_list
+    ordenada = al.new_list()
     survey = 0
     census = 0
-    tamaño = 0
     info = {'source': None,
             'commodity': None,
                'unit_measurement': None,
@@ -292,12 +285,9 @@ def req_3(catalog, dep, year0, year):
         if catalog["state_name"]["elements"][i] == str(dep) and year0 <= catalog["year_collection"]["elements"][i] <= year:
             if catalog["load_time"]["elements"][i] not in ordenada["elements"]:
                 al.add_last(ordenada, catalog["load_time"]["elements"][i])
-                tamaño += 1
-            else:
-                tamaño += 1
     al.selection_sort(ordenada, False)
-    for j in range(ordenada["size"]):    
-        for i in range(catalog["state_name"]["size"]):
+    for j in range(ordenada["size"] - 1):    
+        for i in range(catalog["load_time"]["size"] - 1):
             if catalog["load_time"]["elements"][i] == ordenada["elements"][j]:
                 if catalog["state_name"]["elements"][i] == str(dep) and year0 <= catalog["year_collection"]["elements"][i] <= year:
                     info = { 
@@ -313,10 +303,11 @@ def req_3(catalog, dep, year0, year):
                         census += 1
                     if catalog["source"]["elements"][i] == "SURVEY":
                         survey += 1
+    tamaño = al.size(lista_info)
     if tamaño > 20:
         for i in range(0, 5):
             al.add_last(alt_info, lista_info["elements"][i])
-        for k in range(-6, 5):
+        for k in range(tamaño - 5, tamaño):
             al.add_last(alt_info, lista_info["elements"][k])
         end_time=get_time()
         req_3_time=delta_time(start_time,end_time)
@@ -350,13 +341,113 @@ def req_6(catalog):
     pass
 
 
-def req_7(catalog):
+def req_7(catalog, dep, year0, year, ord):
+    
     """
     Retorna el resultado del requerimiento 7
     """
     # TODO: Modificar el requerimiento 7
-    pass
-
+    start_time = get_time()
+    if year<year0:
+        return "Por favor introduzca un intervalo de tiempo valido..."
+    if ord == "ASCENDENTE":
+        ord = True
+    else:
+        ord = False
+    filtro = 0
+    invalid = 0
+    ingresos = 0
+    survey = 0
+    census = 0
+    t_filtro = 0
+    maxx = None
+    minn = None
+    lista_temp = al.new_list()
+    ordenados = al.new_list()
+    ordenados2 = al.new_list()
+    lista_retorno = al.new_list()
+    alt_list = al.new_list()
+    info = {
+        "año": None,
+        "ingresos": None,
+        "filtro": None,
+        "invalidos": None,
+        "survey": None,
+        "census": None
+    }
+    anio0 = int(year0)
+    anio = int(year)
+    for i in range(anio0, anio):
+        for j in range(catalog["year_collection"]["size"]-1):
+             if int(catalog["year_collection"]["elements"][j]) == i and catalog["state_name"]["elements"][j] == str(dep):
+                 if catalog["unit_measurement"]["elements"][j] == "$":
+                     filtro += 1
+                     if catalog["source"]["elements"][j] == "SURVEY":
+                         survey += 1
+                     else:
+                         census +=1
+                     if catalog["value"]["elements"][j] == "(D)":
+                         invalid += 1
+                     else:
+                         ingresos = str(catalog["value"]["elements"][j])
+        info = {
+            "año": i,
+            "ingresos": ingresos,
+            "filtro": filtro,
+            "invalidos": invalid,
+            "survey": survey,
+            "census": census
+        }
+        al.add_last(lista_temp, info.copy())
+        filtro = 0
+        invalid = 0
+        ingresos = 0
+        survey = 0
+        census = 0
+    for i in range(lista_temp["size"]-1):
+        t_filtro += lista_temp["elements"][i]["filtro"]
+        al.add_last(ordenados, str(lista_temp["elements"][i]["ingresos"]))
+    al.selection_sort(ordenados, ord)
+    if ord:
+        minn = ordenados["elements"][0]
+        maxx = ordenados["elements"][-1]
+    else:
+        maxx = ordenados["elements"][0]
+        minn = ordenados["elements"][-1]
+    for i in range(lista_temp["size"]-1):
+        if lista_temp["elements"][i]["ingresos"] == maxx:
+            maxx = lista_temp["elements"][i]["año"]
+        elif lista_temp["elements"][i]["ingresos"] == minn:
+            minn = lista_temp["elements"][i]["año"]
+    for i in range(ordenados["size"]-1):
+        if i < ordenados["size"] and ordenados["elements"][i] == ordenados["elements"][i+1]:
+            inicio = i
+            for j in range(lista_temp["size"]-1):
+                if lista_temp["elements"][j]["ingresos"] == ordenados["elements"][i]:
+                    al.add_last(ordenados2, lista_temp["elements"][j]["filtro"])
+            al.selection_sort(ordenados2, ord)
+            for l in range(inicio, ordenados2["size"]-1):
+                for k in range(lista_temp["size"]-1):
+                    if ordenados2["elements"][l] == lista_temp["elements"][k]["filtro"]:
+                        al.add_last(lista_retorno, lista_temp["elements"][k])
+            i += ordenados2["size"] - 1 
+            ordenados2 = al.new_list()
+        else:
+            al.add_last(lista_retorno, lista_temp["elements"][i])
+    pasaron = al.size(lista_retorno)
+    if pasaron > 15:
+        for i in range(0, 5):
+            al.add_last(alt_list, lista_retorno["elements"][i])
+        for i in range(pasaron - 5, pasaron):
+            al.add_last(alt_list, lista_retorno["elements"][i])
+        end_time = get_time()
+        req_7_time = delta_time(start_time, end_time)
+        return t_filtro, alt_list, maxx, minn, req_7_time 
+    else:
+        end_time = get_time()
+        req_7_time = delta_time(start_time, end_time)
+        return t_filtro, lista_retorno, maxx, minn, req_7_time
+        
 
 def req_8(catalog):
     """
