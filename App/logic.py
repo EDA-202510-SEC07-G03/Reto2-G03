@@ -99,15 +99,15 @@ def load_data(catalog, datos):
 def lesser_year(catalog):
     año=catalog["year_collection"]["elements"][0]
     for i in catalog["year_collection"]["elements"]:
-        if año > i:
-            año=i
+        if i < año:
+            año = i
     return año
 
 def greater_year(catalog):
     año=catalog["year_collection"]["elements"][0]
     for i in catalog["year_collection"]["elements"]:
-        if año < i:
-            año=i
+        if i > año:
+            año = i
     return año
 
 def primeros(catalog):
@@ -279,7 +279,7 @@ def req_3(catalog, dep, year0, year):
                'unit_measurement': None,
                'year_collection': None,
                'freq_collection': None,
-               'load_time': None,}
+               'load_time': None}
     
     for i in range(catalog["state_name"]["size"]):
         if catalog["state_name"]["elements"][i] == str(dep) and year0 <= catalog["year_collection"]["elements"][i] <= year:
@@ -318,13 +318,64 @@ def req_3(catalog, dep, year0, year):
         return (lista_info, survey, census, tamaño, req_3_time)
 
 
-def req_4(catalog):
+def req_4(catalog, product, ai, af):
     """
     Retorna el resultado del requerimiento 4
     """
-    # TODO: Modificar el requerimiento 4
-    pass
-
+    start_time = get_time()
+    
+    if af < ai:
+        return "Ingrese un intervalo de tiempo válido"
+    
+    filtro = al.new_list()
+    ans = al.new_list()
+    registros = 0
+    survey = 0
+    census = 0
+    
+    for i in range(catalog["commodity"]["size"]):
+        if (catalog["commodity"]["elements"][i] == product and ai <= catalog["year_collection"]["elements"][i] <= af):
+            year = catalog["year_collection"]["elements"][i]
+            if year not in filtro["elements"]:
+                al.add_last(filtro, year)
+    
+    al.selection_sort(filtro, False) 
+    
+    for year in filtro["elements"]:
+        for i in range(catalog["commodity"]["size"]):
+            if (catalog["commodity"]["elements"][i] == product and ai <= catalog["year_collection"]["elements"][i] <= af and catalog["year_collection"]["elements"][i] == year):
+                info = {
+                    "source": catalog["source"]["elements"][i],
+                    "year_collection": catalog["year_collection"]["elements"][i],
+                    "load_time": catalog["load_time"]["elements"][i],
+                    "freq_collection": catalog["freq_collection"]["elements"][i],
+                    "state_name": catalog["state_name"]["elements"][i],
+                    "unit_measurement": catalog["unit_measurement"]["elements"][i]
+                }
+                
+                al.add_last(ans, info)
+                
+                if catalog["source"]["elements"][i] == "SURVEY":
+                    survey += 1
+                else:
+                    census += 1
+                registros += 1
+    
+    if ans["size"] > 20:
+        sub_list = al.new_list()
+        for i in range(0,5):
+            al.add_last(sub_list,ans["elements"][i])
+        for i in range(ans["size"]-5,ans["size"]):
+            al.add_last(sub_list,ans["elements"][i])
+        end_time = get_time()
+        time = delta_time(start_time,end_time)
+        return sub_list["elements"],survey,census,registros,time
+        
+    
+    
+    end_time = get_time()
+    time = delta_time(start_time,end_time)
+    return ans["elements"],survey,census,registros,time
 
 def req_5(catalog):
     """
@@ -333,14 +384,60 @@ def req_5(catalog):
     # TODO: Modificar el requerimiento 5
     pass
 
-def req_6(catalog):
+def req_6(catalog, dep, ai, af):
     """
     Retorna el resultado del requerimiento 6
     """
-    # TODO: Modificar el requerimiento 6
-    pass
+    start_time = get_time()
+    organized = al.new_list()
+    ans = al.new_list()
+    registros = 0
+    survey = 0
+    census = 0
+    
+    for i in range(catalog["load_time"]["size"]):
+        load_time = catalog["load_time"]["elements"][i][:10]
+        if (catalog["state_name"]["elements"][i] == dep and ai <= load_time <= af):
+            if load_time not in organized["elements"]:
+                al.add_last(organized, load_time)
+                
+    al.selection_sort(organized, False)
+    
+    for load_time in organized["elements"]:
+        for i in range(catalog["load_time"]["size"]):
+            current_time = catalog["load_time"]["elements"][i][:10]
+            if (catalog["state_name"]["elements"][i] == dep and ai <= current_time <= af and current_time == load_time):
+                info = {
+                    "source": catalog["source"]["elements"][i],
+                    "year_collection": catalog["year_collection"]["elements"][i],
+                    "load_time": catalog["load_time"]["elements"][i],
+                    "freq_collection": catalog["freq_collection"]["elements"][i],
+                    "state_name": catalog["state_name"]["elements"][i],
+                    "unit_measurement": catalog["unit_measurement"]["elements"][i],
+                    "commodity": catalog["commodity"]["elements"][i]
+                }
+                al.add_last(ans, info)
+                
+                if catalog["source"]["elements"][i] == "SURVEY":
+                    survey += 1
+                else:
+                    census += 1
+                registros += 1
+    
+    if ans["size"] > 20:
+        sub_list = al.new_list()
+        for i in range(0,5):
+            al.add_last(sub_list,ans["elements"][i])
+        for i in range(ans["size"]-5,ans["size"]):
+            al.add_last(sub_list,ans["elements"][i])
+        end_time = get_time()
+        time = delta_time(start_time,end_time)
+        return sub_list["elements"],survey,census,registros,time
 
-
+    end_time = get_time()
+    time = delta_time(start_time,end_time)
+    return ans["elements"],survey,census,registros,time
+                
 def req_7(catalog, dep, year0, year, ord):
     
     """
