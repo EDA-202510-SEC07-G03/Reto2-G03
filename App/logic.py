@@ -342,7 +342,7 @@ def req_4(catalog, product, ai, af):
             if year not in filtro["elements"]:
                 al.add_last(filtro, year)
     
-    al.selection_sort(filtro, False) 
+    al.merge_sort(filtro, False) 
     
     for year in filtro["elements"]:
         for i in range(catalog["commodity"]["size"]):
