@@ -3,6 +3,8 @@ import sys
 import App.logic as log
 
 import os
+
+import pprint as p
 default_limit=1000
 
 
@@ -54,11 +56,11 @@ def load_data(control):
     print("Primer año de registro reportado: ", prim)
     print("Primeros 5 registros cargados: ")
     print("...")
-    print(first)
+    p.pprint(first)
     print("...")
     print("Últimos 5 registros cargados: ")
     print("...")
-    print(last)
+    p.pprint(last)
     print("La acción tomó: ", load_time, "ms")
     return control
 
@@ -78,7 +80,9 @@ def print_req_1(control):
     anno=input("Inserte el año de interés: ")
     datos=log.req_1(control,anno)
     print("El último registro para el año dado es: ",datos[0])
+    print("...")
     print("Un total de: ", datos[2], " registros pasaron el filtro de busqueda.")
+    print("...")
     print("La acción tomó: ", datos[1], "ms")
 
 
@@ -170,10 +174,11 @@ def print_req_7(control):
     datos=log.req_7(control,dep,fecha_i,fecha_f,ord)
     
     print("Un total de "+ str(datos[0]) +" cumplieron el filtro.")
-    print("Listado de años: "+ str(datos[1]))
-    print("El año con MAYOR ingresos encontrado fue: "+ str(datos[2]))
-    print("El año con MENOR ingresos encontrado fue: "+ str(datos[3]))
-    print("La acción tomó: "+ str(datos[4]) +" ms")
+    print("...")
+    print("Listado de años: ")
+    p.pprint(datos[1])
+    print("...")
+    print("La acción tomó: "+ str(datos[2]) +" ms")
 
 
 def print_req_8(control):
