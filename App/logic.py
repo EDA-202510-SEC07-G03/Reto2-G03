@@ -113,7 +113,7 @@ def greater_year(catalog):
 def primeros(catalog):
     lista_retorno=al.new_list()
     ordenados = al.new_list()
-    ordenados2 = al.new_list()
+    ordena2 = al.new_list()
     
     for i in range(0, 5):
         al.add_last(ordenados, catalog["load_time"]["elements"][i])
@@ -122,11 +122,11 @@ def primeros(catalog):
         if j < ordenados["size"]-1 and ordenados["elements"][j] == ordenados["elements"][j+1]:
             for i in range(0, 5):
                 if ordenados["elements"][j] == catalog["load_time"]["elements"][i]:
-                    al.add_last(ordenados2, catalog["state_name"]["elements"][i])
-            al.merge_sort(ordenados2, True)
-            for l in range(ordenados2["size"]-1):
+                    al.add_last(ordena2, catalog["state_name"]["elements"][i])
+            al.merge_sort(ordena2, True)
+            for l in range(ordena2["size"]-1):
                 for k in range(0, 5):
-                    if ordenados2["elements"][l] == catalog["state_name"]["elements"][k]:
+                    if ordena2["elements"][l] == catalog["state_name"]["elements"][k]:
                         info = { 
                             "source": catalog["source"]["elements"][j],
                             "unit_measurement": catalog["unit_measurement"]["elements"][j],
@@ -138,8 +138,8 @@ def primeros(catalog):
                             }
                         if info not in lista_retorno["elements"]:
                             al.add_last(lista_retorno, info)
-            j += ordenados2["size"] 
-            ordenados2 = al.new_list()
+            j += ordena2["size"] 
+            ordena2 = al.new_list()
 
         else:
             for i in range(0, 5):
@@ -160,7 +160,7 @@ def primeros(catalog):
 def ultimos(catalog):
     lista_retorno = al.new_list()
     ordenados = al.new_list()
-    ordenados2 = al.new_list()
+    ordena2 = al.new_list()
     tamaño = catalog["load_time"]["size"]
     
     for i in range(tamaño - 5, tamaño):
@@ -170,11 +170,11 @@ def ultimos(catalog):
         if j < ordenados["size"] - 1 and ordenados["elements"][j] == ordenados["elements"][j + 1]:
             for i in range(tamaño - 5, tamaño):
                 if ordenados["elements"][j] == catalog["load_time"]["elements"][i]:
-                    al.add_last(ordenados2, catalog["state_name"]["elements"][i])
-            al.merge_sort(ordenados2, True)  
-            for l in range(0, ordenados2["size"]):
+                    al.add_last(ordena2, catalog["state_name"]["elements"][i])
+            al.merge_sort(ordena2, True)  
+            for l in range(0, ordena2["size"]):
                 for k in range(tamaño - 5, tamaño):
-                    if catalog["state_name"]["elements"][k] == ordenados2["elements"][l]:
+                    if catalog["state_name"]["elements"][k] == ordena2["elements"][l]:
                         info = {
                             "source": catalog["source"]["elements"][k],
                             "unit_measurement": catalog["unit_measurement"]["elements"][k],
@@ -186,8 +186,8 @@ def ultimos(catalog):
                         }
                         if info not in lista_retorno["elements"]:
                             al.add_last(lista_retorno, info)
-            j += ordenados2["size"] - 1
-            ordenados2 = al.new_list()
+            j += ordena2["size"] - 1
+            ordena2 = al.new_list()
         
         else:
             for i in range(tamaño - 5, tamaño):
@@ -235,7 +235,7 @@ def req_1(catalog,anno):
     for i in range(catalog["year_collection"]["size"]):
         if catalog["year_collection"]["elements"][i] == str(anno):
             al.add_last(lista_fechas, catalog["load_time"]["elements"][i])
-    al.merge_sort(lista_fechas, False)
+    al.merge_sort(lista_fechas, True)
     pasaron=al.size(lista_fechas)
     ultima=lista_fechas["elements"][0]
     
@@ -455,6 +455,7 @@ def req_7(catalog, dep, year0, year, ord):
     else:
         ord = False
     filtro = 0
+    t_filtro = 0
     invalid = 0
     ingresos = 0
     survey = 0
@@ -464,7 +465,7 @@ def req_7(catalog, dep, year0, year, ord):
     minn = None
     lista_temp = al.new_list()
     ordenados = al.new_list()
-    ordenados2 = al.new_list()
+    ordena2 = al.new_list()
     lista_retorno = al.new_list()
     alt_list = al.new_list()
     info = {
@@ -483,6 +484,7 @@ def req_7(catalog, dep, year0, year, ord):
              if int(catalog["year_collection"]["elements"][j]) == i and catalog["state_name"]["elements"][j] == str(dep):
                  if catalog["unit_measurement"]["elements"][j] == "$":
                      filtro += 1
+                     t_filtro += 1
                      if catalog["source"]["elements"][j] == "SURVEY":
                          survey += 1
                      else:
@@ -507,7 +509,6 @@ def req_7(catalog, dep, year0, year, ord):
         survey = 0
         census = 0
     for i in range(lista_temp["size"]-1):
-        t_filtro += lista_temp["elements"][i]["filtro"]
         al.add_last(ordenados, str(lista_temp["elements"][i]["ingresos"]))
     al.merge_sort(ordenados, ord)
     if ord == True:
@@ -526,14 +527,14 @@ def req_7(catalog, dep, year0, year, ord):
             inicio = i
             for j in range(lista_temp["size"]-1):
                 if lista_temp["elements"][j]["ingresos"] == ordenados["elements"][i]:
-                    al.add_last(ordenados2, lista_temp["elements"][j]["filtro"])
-            al.merge_sort(ordenados2, ord)
-            for l in range(inicio, ordenados2["size"]-1):
+                    al.add_last(ordena2, lista_temp["elements"][j]["filtro"])
+            al.merge_sort(ordena2, ord)
+            for l in range(inicio, ordena2["size"]-1):
                 for k in range(lista_temp["size"]-1):
-                    if ordenados2["elements"][l] == lista_temp["elements"][k]["filtro"]:
+                    if ordena2["elements"][l] == lista_temp["elements"][k]["filtro"]:
                         al.add_last(lista_retorno, lista_temp["elements"][k])
-            i += ordenados2["size"] - 1 
-            ordenados2 = al.new_list()
+            i += ordena2["size"] - 1 
+            ordena2 = al.new_list()
         else:
             al.add_last(lista_retorno, lista_temp["elements"][i])
     pasaron = al.size(lista_retorno)

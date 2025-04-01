@@ -104,7 +104,8 @@ def print_req_3(control):
     nombre=input("Inserte el nombre del departamento de interes: ")
     datos=log.req_3(control,nombre,anno_i,anno_f)
     
-    print("Listado de registros: ", datos[0])
+    print("Listado de registros: ")
+    p.pprint(datos[0])
     print("...")
     print("Un total de: ", datos[3], " registros pasaron el filtro de busqueda.")
     print("...")
@@ -124,7 +125,8 @@ def print_req_4(control):
     product=input("Producto: ")
     data = log.req_4(control,product,ai,af)
     
-    print("Listado de registros: ", data[0])
+    print("Listado de registros: ")
+    p.pprint(data[0])
     print("...")
     print("Un total de: ", data[3], " registros pasaron el filtro de busqueda.")
     print("...")
@@ -152,7 +154,8 @@ def print_req_6(control):
     dep=input("Departamento de interes: ")
     datos=log.req_6(control,dep,ai,af)
     
-    print("Listado de registros: ", datos[0])
+    print("Listado de registros: ")
+    p.pprint(datos[0])
     print("...")
     print("Un total de: ", datos[3], " registros pasaron el filtro de busqueda.")
     print("...")
